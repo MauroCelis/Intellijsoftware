@@ -1,6 +1,5 @@
 package com.example.EstudianteIntellij;
 
-import jdk.internal.org.jline.utils.Status;
 import lombok.Data;
 import org.hibernate.criterion.Order;
 
@@ -14,13 +13,13 @@ public class Ordenar{
 
     private @Id @GeneratedValue Long id;
     private String descripcion;
-    private String status;
+    private Status status;
 
     Ordenar(){
 
     }
 
-    Ordenar(String descripcion, String status){
+    Ordenar(String descripcion, Status status){
         this.descripcion=descripcion;
         this.status=status;
     }

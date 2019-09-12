@@ -40,7 +40,7 @@ public class ControladordeOrden {
     Resource<Order> one(@PathVariable Long id) {
         return assembler.toResource(
                 orderRepository.findById(id)
-                        .orElseThrow(() -> new OrderNotFoundException(id)));
+                        .orElseThrow(() -> new ControladordeOrden(id)));
     }
 
     @PostMapping("/ordenes")
@@ -57,7 +57,7 @@ public class ControladordeOrden {
     @DeleteMapping("/orders/{id}/cancel")
     ResponseEntity<ResourceSupport> cancel(@PathVariable Long id) {
 
-        Ordenar order = orderRepository.findById(id).orElseThrow(() -> new OrderNotFoundException(id));
+        Ordenar order = orderRepository.findById(id).orElseThrow(() -> new ExcepcionOrdenNoEncontrado(id));
 
         if (order.getStatus() == Status.EN_PROGRESO) {
             order.setStatus(Status.CANCELADO);
@@ -67,6 +67,21 @@ public class ControladordeOrden {
         return ResponseEntity
                 .status(HttpStatus.METHOD_NOT_ALLOWED)
                 .body(new VndErrors.VndError("Metodo no valido", "No es fue posible que puedas cambiar " + order.getStatus() + " status"));
+    }
+
+    @PutMapping("/orders/{id}/complete")
+    ResponseEntity<ResourceSupport> complete(@PathVariable Long id) {
+
+        Ordenar order = orderRepository.findById(id).orElseThrow(() -> new ExcepcionOrdenNoEncontrado(id));
+
+        if (order.getStatus() == Status.EN_PROGRESO) {
+            order.setStatus(Status.COMPLETADO);
+            return ResponseEntity.ok(assembler.toResource(orderRepository.save(order)));
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.METHOD_NOT_ALLOWED)
+                .body(new VndErrors.VndError("Methodo no ejecutado", "No fue posible completar la orden" + order.getStatus() + " status"));
     }
 
 
