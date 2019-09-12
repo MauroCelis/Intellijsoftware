@@ -1,6 +1,12 @@
 package com.example.EstudianteIntellij;
 
-public enum Status {
+import lombok.Data;
+
+import javax.persistence.Entity;
+
+@Entity
+@Data
+enum Status {
     EN_PROGRESO,
     COMPLETADO,
     CANCELADO;
