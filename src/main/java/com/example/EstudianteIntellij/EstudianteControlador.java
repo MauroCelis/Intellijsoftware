@@ -76,7 +76,9 @@ class EstudianteControlador {
 
 
     @DeleteMapping("/estudiantes/{id}")
-    void borrarEstudiantes(@PathVariable Long id){
+    ResponseEntity<?> borrarEstudiante(@PathVariable Long id){
         repositorio.deleteById(id);
+
+        return  ResponseEntity.noContent().build();
     }
 }
