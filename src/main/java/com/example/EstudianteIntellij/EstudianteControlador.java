@@ -52,19 +52,27 @@ class EstudianteControlador {
     }
 
     @PutMapping("/estudiantes/{id}")
-    Estudiante reemplazarEstudiante(@RequestBody Estudiante nuevoEstudiante, @PathVariable Long id){
+    ResponseEntity<?> reemplazarEstudiante(@RequestBody Estudiante nuevoEstudiante, @PathVariable Long id) throws URISyntaxException {
 
-        return repositorio.findById(id)
+        Estudiante cambioEstudiante = repositorio.findById(id)
                 .map(estudiante -> {
                     estudiante.setNombre(nuevoEstudiante.getNombre());
                     estudiante.setApellido(nuevoEstudiante.getApellido());
+                    estudiante.setNota(nuevoEstudiante.getNota());
                     return repositorio.save(estudiante);
-                }).orElseGet(()->{
+                })
+                .orElseGet(() -> {
                     nuevoEstudiante.setId(id);
-                    return  repositorio.save(nuevoEstudiante);
-
+                    return repositorio.save(nuevoEstudiante);
                 });
+
+        Resource<Estudiante> resource = assembler.toResource(cambioEstudiante);
+
+        return ResponseEntity
+                .created(new URI(resource.getId().expand().getHref()))
+                .body(resource);
     }
+
 
 
     @DeleteMapping("/estudiantes/{id}")
