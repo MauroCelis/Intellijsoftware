@@ -15,20 +15,19 @@ import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
 class EstudianteControlador {
 
     private final EstudianteRepositorio repositorio;
+    private final  EstudianteResourceAssembler assembler;
 
-    EstudianteControlador(EstudianteRepositorio repositorio){
+    EstudianteControlador(EstudianteRepositorio repositorio,EstudianteResourceAssembler assembler){
         this.repositorio=repositorio;
+        this.assembler=assembler;
     }
 
     @GetMapping("/estudiantes")
     Resources <Resource<Estudiante>> all(){
             List<Resource<Estudiante>>  estudiantes=repositorio.findAll().stream().
-                    map(estudiante ->
-                    new Resource<>(estudiante,
-                            linkTo(methodOn(EstudianteControlador.class).one(estudiante.getId())).withSelfRel(),
-                            linkTo(methodOn(EstudianteControlador.class).all()).withRel("estudiantes"))).collect(Collectors.toList());
-        return new Resources<>(estudiantes,
-                linkTo(methodOn(EstudianteControlador.class).all()).withSelfRel());
+                    map(assembler::toResource).collect(Collectors.toList());
+            return new Resources<>(estudiantes,
+                    linkTo(methodOn(EstudianteControlador.class).all()).withSelfRel());
     }
 
     @PostMapping("/estudiantes")
@@ -38,6 +37,8 @@ class EstudianteControlador {
 
     @GetMapping("/estudiantes/{id}")
     Resource<Estudiante> one(@PathVariable Long id){
+
+
         Estudiante estudiante=repositorio.findById(id)
                 .orElseThrow(()->new EstudianteNotFoundException(id));
         return new Resource<>(estudiante,

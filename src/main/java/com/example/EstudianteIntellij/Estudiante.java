@@ -1,7 +1,13 @@
 package com.example.EstudianteIntellij;
 
+import lombok.Data;
+
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
+@Data
+@Entity
 
 public class Estudiante
 {
@@ -19,35 +25,17 @@ public class Estudiante
         this.nota = nota;
     }
 
-    public String getNota() {
-        return nota;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 
     public String getNombre() {
-        return nombre;
+        return this.nombre+" "+this.apellido;
     }
 
-    public String getApellido() {
-        return apellido;
-    }
 
     public void setNombre(String nombre) {
-        this.nombre = nombre;
+        String [] parts=nombre.split(" " );
+        this.nombre=parts[0];
+        this.apellido=parts[1];
+
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
-    }
-
-    public void setNota(String nota) {
-        this.nota = nota;
-    }
 }
