@@ -3,8 +3,11 @@ package com.example.EstudianteIntellij;
 import org.springframework.hateoas.Resource;
 
 import org.springframework.hateoas.Resources;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,8 +34,9 @@ class EstudianteControlador {
     }
 
     @PostMapping("/estudiantes")
-    Estudiante nuevoEstudiante(@RequestBody Estudiante nuevoEstudiante){
-        return repositorio.save(nuevoEstudiante);
+    ResponseEntity<?> nuevoEstudiante(@RequestBody Estudiante nuevoEstudiante) throws URISyntaxException{
+        Resource<Estudiante> resource=assembler.toResource(repositorio.save(nuevoEstudiante));
+        return ResponseEntity.created(new URI(resource.getId().expand().getHref())).body(resource);
     }
 
     @GetMapping("/estudiantes/{id}")
@@ -62,11 +66,9 @@ class EstudianteControlador {
                 });
     }
 
+
     @DeleteMapping("/estudiantes/{id}")
     void borrarEstudiantes(@PathVariable Long id){
         repositorio.deleteById(id);
     }
-
-
-
 }
